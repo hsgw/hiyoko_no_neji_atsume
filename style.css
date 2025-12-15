@@ -12,6 +12,8 @@
   --button-active-color: #333;
   --button-text-color: #aaa;
   --button-text-active-color: #ddd;
+  --game-scale: 2.5; /* ゲーム画面の拡大率 */
+  --dpad-border-width: calc(1px * var(--game-scale)); /* 十字キーのボーダー幅 */
 }
 
 body {
@@ -34,24 +36,26 @@ body {
 /* --- Game Container (The "Shell") --- */
 #game-container {
   background-color: var(--shell-color);
-  padding: 20px;
-  border-radius: 10px 10px 30px 10px; /* 角丸 */
+  padding: calc(20px * var(--game-scale));
+  border-radius: calc(10px * var(--game-scale)) calc(10px * var(--game-scale))
+    calc(30px * var(--game-scale)) calc(10px * var(--game-scale)); /* 角丸 */
   box-shadow:
-    inset 0 0 5px rgba(0, 0, 0, 0.2),
-    5px 5px 10px rgba(0, 0, 0, 0.5);
+    inset 0 0 calc(5px * var(--game-scale)) rgba(0, 0, 0, 0.2),
+    calc(5px * var(--game-scale)) calc(5px * var(--game-scale))
+      calc(10px * var(--game-scale)) rgba(0, 0, 0, 0.5);
   /* 整数倍で拡大 (表示環境に合わせて調整) */
-  zoom: 2.5; /* transformの代わりにzoomを使用 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: calc(12px * var(--game-scale));
 }
 
 /* --- Screen Area --- */
 #screen-area {
   background-color: var(--screen-bezel-color);
-  padding: 16px;
-  border-radius: 3px 3px 9px 3px;
+  padding: calc(16px * var(--game-scale));
+  border-radius: calc(3px * var(--game-scale)) calc(3px * var(--game-scale))
+    calc(9px * var(--game-scale)) calc(3px * var(--game-scale));
 }
 
 canvas {
@@ -61,13 +65,15 @@ canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   display: block; /* canvas間の余白をなくす */
+  width: calc(160px * var(--game-scale));
+  height: calc(144px * var(--game-scale));
 }
 
 /* --- UI Controls --- */
 #ui-controls {
   position: relative; /* 子要素を絶対位置で配置するための基準 */
-  width: 160px;
-  height: 90px; /* D-Padのサイズに合わせる */
+  width: calc(160px * var(--game-scale));
+  height: calc(90px * var(--game-scale)); /* D-Padのサイズに合わせる */
   display: flex;
   align-items: center;
   justify-content: center; /* 中央揃えに変更 */
@@ -80,8 +86,8 @@ canvas {
 /* --- D-Pad --- */
 #d-pad {
   display: grid;
-  grid-template-columns: repeat(3, 25px);
-  grid-template-rows: repeat(3, 25px);
+  grid-template-columns: repeat(3, calc(25px * var(--game-scale)));
+  grid-template-rows: repeat(3, calc(25px * var(--game-scale)));
   gap: 0;
 }
 
@@ -100,18 +106,18 @@ canvas {
 #d-pad-up {
   grid-column: 2;
   grid-row: 1;
-  border-top: 1px solid var(--button-border-color);
-  border-left: 1px solid var(--button-border-color);
-  border-right: 1px solid var(--button-border-color);
-  border-radius: 5px 5px 0 0;
+  border-top: var(--dpad-border-width) solid var(--button-border-color);
+  border-left: var(--dpad-border-width) solid var(--button-border-color);
+  border-right: var(--dpad-border-width) solid var(--button-border-color);
+  border-radius: calc(5px * var(--game-scale)) calc(5px * var(--game-scale)) 0 0;
 }
 #d-pad-left {
   grid-column: 1;
   grid-row: 2;
-  border-top: 1px solid var(--button-border-color);
-  border-left: 1px solid var(--button-border-color);
-  border-bottom: 1px solid var(--button-border-color);
-  border-radius: 5px 0 0 5px;
+  border-top: var(--dpad-border-width) solid var(--button-border-color);
+  border-left: var(--dpad-border-width) solid var(--button-border-color);
+  border-bottom: var(--dpad-border-width) solid var(--button-border-color);
+  border-radius: calc(5px * var(--game-scale)) 0 0 calc(5px * var(--game-scale));
 }
 #d-pad-center {
   grid-column: 2;
@@ -122,38 +128,38 @@ canvas {
 #d-pad-right {
   grid-column: 3;
   grid-row: 2;
-  border-top: 1px solid var(--button-border-color);
-  border-right: 1px solid var(--button-border-color);
-  border-bottom: 1px solid var(--button-border-color);
-  border-radius: 0 5px 5px 0;
+  border-top: var(--dpad-border-width) solid var(--button-border-color);
+  border-right: var(--dpad-border-width) solid var(--button-border-color);
+  border-bottom: var(--dpad-border-width) solid var(--button-border-color);
+  border-radius: 0 calc(5px * var(--game-scale)) calc(5px * var(--game-scale)) 0;
 }
 #d-pad-down {
   grid-column: 2;
   grid-row: 3;
-  border-bottom: 1px solid var(--button-border-color);
-  border-left: 1px solid var(--button-border-color);
-  border-right: 1px solid var(--button-border-color);
-  border-radius: 0 0 5px 5px;
+  border-bottom: var(--dpad-border-width) solid var(--button-border-color);
+  border-left: var(--dpad-border-width) solid var(--button-border-color);
+  border-right: var(--dpad-border-width) solid var(--button-border-color);
+  border-radius: 0 0 calc(5px * var(--game-scale)) calc(5px * var(--game-scale));
 }
 
 /* --- Action Buttons --- */
 .action-btn {
   position: absolute; /* ui-controlsを基準に配置 */
   bottom: 0px; /* 十字キーの下のラインと揃える */
-  width: 28px;
-  height: 14px;
+  width: calc(28px * var(--game-scale));
+  height: calc(14px * var(--game-scale));
   background-color: var(--button-color);
-  border: 1px solid var(--button-border-color);
+  border: var(--dpad-border-width) solid var(--button-border-color);
   color: var(--button-text-color);
   font-family: monospace; /* Use a font that looks somewhat pixelated */
-  font-size: 6px;
+  font-size: calc(6px * var(--game-scale));
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0;
   box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: calc(5px * var(--game-scale));
 }
 
 .action-btn:active,
@@ -250,9 +256,12 @@ footer a:hover {
 
 /* スマートフォン向けのスタイル */
 @media (max-width: 580px) {
+  :root {
+    --game-scale: 2;
+  }
+
   /* PC向けの拡大をリセット */
   #game-container {
-    zoom: 2.5;
     width: 100%;
     padding-left: 0;
     padding-right: 0;
@@ -273,7 +282,7 @@ footer a:hover {
 }
 
 @media (max-width: 400px) {
-  #game-container {
-    zoom: 2;
+  :root {
+    --game-scale: 2;
   }
 }
