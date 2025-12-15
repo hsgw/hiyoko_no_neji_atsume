@@ -9,8 +9,10 @@ const NATIVE_HEIGHT = 144;
 const GRID_SIZE = 8;
 const FPS_TARGET = 60;
 const BASE_SPEED_GPS = 2; // グリッド/秒
-const SPEED_INCREASE_PICKUP = 0.1;
-const SPEED_INCREASE_DELIVERY = 0.3;
+const INITIAL_SPEED_MULTIPLIER = 1.0;
+const SPEED_INCREASE_PICKUP = 0.2;
+const SPEED_INCREASE_DELIVERY = 0.6;
+const SPEED_DECREASE_DELIVERY = 0.6;
 
 // カラーパレット (仕様書準拠)
 const COLORS = {
@@ -221,7 +223,8 @@ function getInitialGameState() {
     chickDirection: "UP",
     moveFrameTimer: 0,
     body: [],
-    speedMultiplier: 1.0,
+    speedMultiplier: INITIAL_SPEED_MULTIPLIER,
+    deliveryBaseSpeed: INITIAL_SPEED_MULTIPLIER,
     score: 0,
     elapsedTime: 0,
     inputQueue: [],
@@ -260,16 +263,22 @@ function startGame() {
     })
   );
 
+  // ねじと箱の初期配置 (仕様書準拠)
+  // 1. 全種類のねじと箱を1つずつ必ず配置
   spawnObject(TILES.SCREW_1);
   spawnObject(TILES.SCREW_2);
   spawnObject(TILES.BOX_1);
   spawnObject(TILES.BOX_2);
 
+  // 2. 仕様に基づき、ねじをもう1つランダムに配置して合計3つにする
+  const randomScrewType = Math.random() < 0.5 ? TILES.SCREW_1 : TILES.SCREW_2;
+  spawnObject(randomScrewType);
+
   gameState.chickPos = { x: 10, y: 9 };
   gameState.chickDirection = "UP";
   gameState.moveFrameTimer = 0;
   gameState.body = [];
-  gameState.speedMultiplier = 1.0;
+  gameState.speedMultiplier = INITIAL_SPEED_MULTIPLIER;
   gameState.score = 0;
   gameState.elapsedTime = 0;
   gameState.currentScene = "PLAYING";
@@ -375,8 +384,39 @@ function spawnObject(tileToSpawn) {
 }
 
 function spawnNewScrew() {
-  const randomScrewType = Math.random() < 0.5 ? TILES.SCREW_1 : TILES.SCREW_2;
-  spawnObject(randomScrewType);
+  // 仕様書 5.4.1: 新しいねじの生成ロジック
+  // 盤上に必ずどちらの種類のねじも存在し続けるようにする
+
+  // 1. 現在盤上にあるすべてのねじの種類をチェック (ひよこが運んでいるものは除く)
+  const existingScrewTypes = new Set();
+  // a. gameMap上のねじ
+  for (let y = 0; y < gameState.gameMap.length; y++) {
+    for (let x = 0; x < gameState.gameMap[y].length; x++) {
+      const tile = gameState.gameMap[y][x];
+      if (tile === TILES.SCREW_1 || tile === TILES.SCREW_2) {
+        existingScrewTypes.add(tile);
+      }
+    }
+  }
+
+  // 2. 生成するねじの種類を決定
+  let screwTypeToSpawn;
+  const hasScrew1 = existingScrewTypes.has(TILES.SCREW_1);
+  const hasScrew2 = existingScrewTypes.has(TILES.SCREW_2);
+
+  if (hasScrew1 && hasScrew2) {
+    // 両方存在する場合、ランダム
+    screwTypeToSpawn = Math.random() < 0.5 ? TILES.SCREW_1 : TILES.SCREW_2;
+  } else if (!hasScrew1) {
+    // ねじ1が欠けている場合、ねじ1を生成
+    screwTypeToSpawn = TILES.SCREW_1;
+  } else {
+    // ねじ2が欠けている場合、ねじ2を生成
+    screwTypeToSpawn = TILES.SCREW_2;
+  }
+
+  // 3. 新しいねじを配置
+  spawnObject(screwTypeToSpawn);
 }
 
 function checkEvents() {
@@ -454,7 +494,15 @@ function checkEvents() {
       gameState.body = newBody;
 
       gameState.score += (comboCount * (comboCount + 1)) / 2;
-      gameState.speedMultiplier += SPEED_INCREASE_DELIVERY;
+      // 仕様書 5.5: デリバリー成功時には速度が減少
+      // 基準速度からの増加分に対して、減少率を適用する
+      gameState.speedMultiplier =
+        gameState.deliveryBaseSpeed +
+        (gameState.speedMultiplier - gameState.deliveryBaseSpeed) *
+          SPEED_DECREASE_DELIVERY;
+
+      // 現在の速度を次回の基準速度として保存
+      gameState.deliveryBaseSpeed = gameState.speedMultiplier;
 
       gameState.gameMap[headPos.y][headPos.x] = TILES.EMPTY;
       spawnObject(targetTile);
