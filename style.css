@@ -1,0 +1,279 @@
+/*
+ * (c) 2025, Takuya Urakawa (@hsgw 5z6p.com)
+ * This software is released under the MIT License.
+ */
+
+:root {
+  /* Gameboy-like Theme Colors */
+  --shell-color: #a09da4;
+  --screen-bezel-color: #303030;
+  --button-color: #555;
+  --button-border-color: #333;
+  --button-active-color: #333;
+  --button-text-color: #aaa;
+  --button-text-active-color: #ddd;
+}
+
+body {
+  margin: 0;
+  background-color: #3d5a80; /* 背景色のみ指定 */
+}
+
+/* --- Wrapper for scaling --- */
+.container-wrapper {
+  background-color: #3d5a80;
+  display: grid;
+  grid-template-rows: auto auto; /* 2つの行をコンテンツの高さで定義 */
+  justify-items: center; /* 水平方向の中央揃え */
+  align-content: center; /* グリッド全体を垂直方向中央に配置 */
+  gap: 20px; /* game-containerとfooterの間の余白 */
+  min-height: 100vh;
+  box-sizing: border-box; /* パディングやボーダーを高さに含める */
+}
+
+/* --- Game Container (The "Shell") --- */
+#game-container {
+  background-color: var(--shell-color);
+  padding: 20px;
+  border-radius: 10px 10px 30px 10px; /* 角丸 */
+  box-shadow:
+    inset 0 0 5px rgba(0, 0, 0, 0.2),
+    5px 5px 10px rgba(0, 0, 0, 0.5);
+  /* 整数倍で拡大 (表示環境に合わせて調整) */
+  zoom: 2.5; /* transformの代わりにzoomを使用 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* --- Screen Area --- */
+#screen-area {
+  background-color: var(--screen-bezel-color);
+  padding: 16px;
+  border-radius: 3px 3px 9px 3px;
+}
+
+canvas {
+  /* 拡大時のぼやけを防ぐ */
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block; /* canvas間の余白をなくす */
+}
+
+/* --- UI Controls --- */
+#ui-controls {
+  position: relative; /* 子要素を絶対位置で配置するための基準 */
+  width: 160px;
+  height: 90px; /* D-Padのサイズに合わせる */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 中央揃えに変更 */
+  box-sizing: border-box;
+  user-select: none; /* テキスト選択を無効化 */
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
+}
+
+/* --- D-Pad --- */
+#d-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 25px);
+  grid-template-rows: repeat(3, 25px);
+  gap: 0;
+}
+
+.d-pad-btn {
+  background-color: var(--button-color);
+  box-sizing: content-box;
+}
+
+/* data-key属性を持つボタンのみ、アクティブ時のスタイルを適用 */
+.d-pad-btn[data-key]:active,
+.d-pad-btn[data-key].active-touch {
+  background-color: var(--button-active-color);
+}
+
+/* D-Pad Shape (外側の枠線のみ描画) */
+#d-pad-up {
+  grid-column: 2;
+  grid-row: 1;
+  border-top: 1px solid var(--button-border-color);
+  border-left: 1px solid var(--button-border-color);
+  border-right: 1px solid var(--button-border-color);
+  border-radius: 5px 5px 0 0;
+}
+#d-pad-left {
+  grid-column: 1;
+  grid-row: 2;
+  border-top: 1px solid var(--button-border-color);
+  border-left: 1px solid var(--button-border-color);
+  border-bottom: 1px solid var(--button-border-color);
+  border-radius: 5px 0 0 5px;
+}
+#d-pad-center {
+  grid-column: 2;
+  grid-row: 2;
+  box-shadow: 0 0 0 0.2px var(--button-color);
+  /* 中央は枠線なし、背景色のみ */
+}
+#d-pad-right {
+  grid-column: 3;
+  grid-row: 2;
+  border-top: 1px solid var(--button-border-color);
+  border-right: 1px solid var(--button-border-color);
+  border-bottom: 1px solid var(--button-border-color);
+  border-radius: 0 5px 5px 0;
+}
+#d-pad-down {
+  grid-column: 2;
+  grid-row: 3;
+  border-bottom: 1px solid var(--button-border-color);
+  border-left: 1px solid var(--button-border-color);
+  border-right: 1px solid var(--button-border-color);
+  border-radius: 0 0 5px 5px;
+}
+
+/* --- Action Buttons --- */
+.action-btn {
+  position: absolute; /* ui-controlsを基準に配置 */
+  bottom: 0px; /* 十字キーの下のラインと揃える */
+  width: 28px;
+  height: 14px;
+  background-color: var(--button-color);
+  border: 1px solid var(--button-border-color);
+  color: var(--button-text-color);
+  font-family: monospace; /* Use a font that looks somewhat pixelated */
+  font-size: 6px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+.action-btn:active,
+.action-btn.active-touch {
+  background-color: var(--button-active-color);
+  color: var(--button-text-active-color);
+}
+
+#start-button {
+  right: 0px;
+}
+
+#info-button {
+  left: 0px;
+}
+
+/* --- Footer --- */
+footer {
+  /* flexアイテムとして自然に配置される */
+  text-align: center;
+  color: var(--shell-color);
+  font-family: monospace;
+  font-size: 14px;
+  padding-bottom: 1rem;
+}
+
+footer a {
+  color: inherit; /* 親要素(footer)の色を継承する */
+  text-decoration: underline; /* 下線を表示 */
+}
+
+footer a:hover {
+  color: #fff; /* マウスオーバー時に白くする */
+}
+
+/* --- Instruction Modal --- */
+#instruction-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #e0d5a6; /* くすんだ黄色 */
+  color: #6b5d44; /* ダークブラウン */
+  border: 2px solid #6b5d44; /* ダークブラウン */
+  padding: 20px;
+  font-family: monospace;
+  font-size: 16px;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+
+#instruction-modal h2 {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.modal-subtitle {
+  text-align: center;
+  padding-bottom: 0.5rem;
+}
+
+#instruction-modal ul {
+  padding-left: 20px;
+  margin-top: 0;
+  margin-bottom: 1.5em;
+}
+
+#instruction-modal li {
+  margin-bottom: 0.5rem;
+}
+
+#close-modal-btn {
+  display: block;
+  margin: 10px auto 0;
+  padding: 5px 10px;
+  font-family: monospace;
+  background-color: #6b5d44; /* ダークブラウン */
+  color: #e0d5a6; /* くすんだ黄色 */
+  border: 1px solid #504532; /* さらに濃いブラウン */
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#close-modal-btn:hover {
+  background-color: #504532;
+}
+
+.hidden {
+  display: none;
+}
+
+/* スマートフォン向けのスタイル */
+@media (max-width: 580px) {
+  /* PC向けの拡大をリセット */
+  #game-container {
+    zoom: 2.5;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    border-radius: 0;
+  }
+
+  #screen-area {
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  #instruction-modal {
+    width: 90vw;
+  }
+}
+
+@media (max-width: 400px) {
+  #game-container {
+    zoom: 2;
+  }
+}

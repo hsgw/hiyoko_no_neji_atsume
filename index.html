@@ -1,0 +1,80 @@
+<!--
+  (c) 2025, Takuya Urakawa (@hsgw 5z6p.com)
+  This software is released under the MIT License.
+-->
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>ひよこのねじあつめ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container-wrapper">
+      <div id="game-container">
+        <div id="screen-area">
+          <canvas id="gameCanvas"></canvas>
+        </div>
+        <div id="ui-controls">
+          <div id="d-pad">
+            <div class="d-pad-btn" id="d-pad-up" data-key="ArrowUp"></div>
+            <div class="d-pad-btn" id="d-pad-left" data-key="ArrowLeft"></div>
+            <div class="d-pad-btn" id="d-pad-center"></div>
+            <div class="d-pad-btn" id="d-pad-right" data-key="ArrowRight"></div>
+            <div class="d-pad-btn" id="d-pad-down" data-key="ArrowDown"></div>
+          </div>
+          <button class="action-btn" id="info-button">INFO</button>
+          <button class="action-btn" id="start-button" data-key="Space">
+            START
+          </button>
+        </div>
+      </div>
+      <div id="instruction-modal">
+        <h2>ひよこのねじあつめ</h2>
+        <p class="modal-subtitle">
+          ひよこのおしごとはねじをわけてはこにつめること！
+        </p>
+        <h2>あそびかた</h2>
+        <p>ひよこを操作して、ねじを同じ種類の箱に届けよう！</p>
+        <ul>
+          <li>ひよこは勝手に前に進みます。</li>
+          <li>十字キー(W/A/S/D)でひよこを操作します。</li>
+          <li>ねじを拾うとひよこの後ろにくっつきます。</li>
+          <li>ひよこの直後にくっついてるねじと同じマークの箱へ届けます。</li>
+          <li>ねじと箱は２種類ずつあります。</li>
+          <li>
+            同じ種類のねじを続けて拾って対応した箱に届けるとコンボボーナス！
+          </li>
+          <li>
+            違うねじを箱に届ける、壁や後ろに繋がったねじにぶつかるとゲームオーバーです。
+          </li>
+        </ul>
+        <h2>このゲームは何？</h2>
+        <p>
+          ひよこアドベントカレンダー2025のために<a
+            href="https://x.com/hsgw"
+            target="_blank"
+            rel="noopener noreferrer"
+            >@hsgw</a
+          >が作りました。
+        </p>
+        <p>ソースコードはこちら</p>
+        <button id="close-modal-btn">とじる</button>
+      </div>
+      <footer>
+        (C) 2025
+        <a href="https://x.com/hsgw" target="_blank" rel="noopener noreferrer"
+          >@hsgw</a
+        >
+        <a href="https://5z6p.com" target="_blank" rel="noopener noreferrer"
+          >5z6p.com</a
+        >
+      </footer>
+    </div>
+    <script src="game.js"></script>
+  </body>
+</html>
