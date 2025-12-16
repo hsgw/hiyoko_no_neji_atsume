@@ -212,6 +212,8 @@ footer a:hover {
   width: 90%;
   max-width: 600px;
   box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 #instruction-modal h2 {
